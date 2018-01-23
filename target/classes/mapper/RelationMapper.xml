@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+ <mapper namespace="com.tedu.cloudnote.dao.UserDao">
+ 	<select id="findUserAndBooks" resultMap="userMap1">
+ 	select * from cn_user
+ 	where cn_user_id = #{id}
+ 	</select>
+ 	
+ 	<resultMap type="com.tedu.cloudnote.entity.User" id="userMap1">
+ 		<!-- 按名称对应装载 -->
+ 		<id property="" column=""/>
+ 		<result property="" column=""/>
+ 		<!-- 定义集合关联属性的加载 -->
+ 		<!-- 制定books属性是一个List集合，泛型为Book
+ 			调用findBooks查询，将cn_user_id作为参数传过去 -->
+ 		<collection property="books"
+ 			javaType="java.util.List"
+ 			ofType="com.tedu.cloudnote.entity.Book"
+ 			select="findBooks" column="cn_user_id">
+ 			</collection>
+ 	</resultMap>
+ 	
+ 	<select id="">
+ 	select * from cn_notebook
+ 	where cn_user_id =#{id}
+ 	</select>
+ </mapper>

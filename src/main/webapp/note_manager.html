@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>笔记管理</title>
+<script type="text/javascript" src="scripts/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/cookie_util.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$("#search_btn").click(function(){
+			var userId = getCookie("userId");
+			if(userId==null){
+				window.location.href = "login.html";
+			}
+			console.log(userId);
+			var title = $("#title").val().trim();
+			var begin = $("#begin").val().trim();
+			var end = $("#end").val().trim();
+			var status = $("#status").val();//获取Select元素值
+			//console.log(title+":"+begin+":"+end+":"+status);
+			//发送ajax请求
+			$.ajax({
+				url:"note/manager.do",
+				type:"post",
+				data:{
+					"userId":userId,
+					"title":title,
+					"begin":begin,
+					"end":end,
+					"status":status
+				},
+				dataType:"json",
+				success:function(result){
+					console.log(result);
+					if(result.status ==0){
+						//清楚原有列表信息
+						$("table tr:gt(0)").remove();
+						var notes = result.data;
+						//循环生成tr元素
+						for(var i=0;i<notes.length;i++){
+							var noteTitle = 
+								notes[i].cn_note_title;
+							var noteStatus = 
+								notes[i].cn_note_status_id;
+							var noteTime = 
+								notes[i].cn_note_create_time;
+							var str ="";
+							str+='<tr>';
+							str+='	<td><input type="checkbox" />'+noteTitle+'</td>';
+							str+='	<td>'+noteStatus+'</td>';
+							str+='	<td>'+noteTime+'</td>';
+							str+='</tr>';
+							var $tr = $(str);
+							//添加到table中
+							$("table").append($tr);
+						}
+					}
+				},
+				error:function(){
+					alert("搜索失败");
+				}
+			});
+		});
+	});
+	
+</script>
+</head>
+<body>
+标题：<input type="text" id = "title">
+状态：<select id = "status">
+		<option value="0">全部</option>
+		<option value="1">正常</option>
+		<option value="2">删除</option>
+	</select><br>
+开始日期：<input type="text" id ="begin">
+结束日期：<input type="text" id ="end">
+<input type="button" id ="search_btn"
+	value="搜索笔记">
+<hr/>
+<table>
+<tr><th>标题</th><th>状态</th><th>创建时间</th></tr>
+</table>
+</body>
+</html>
